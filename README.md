@@ -111,7 +111,7 @@ Este prototipo no requiere publicación en Chrome Web Store ni pago de registro 
 1. Descargar o clonar este repositorio.
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+git clone https://github.com/lauritaggz/OptiSearch.git
 ```
 
 2. Abrir Opera o Google Chrome.

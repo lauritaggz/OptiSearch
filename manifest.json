@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "OptiSearch - Prototipo RT-001",
+  "version": "0.2.0",
+  "description": "Prototipo académico HU0: mitigación del Riesgo Técnico RT-001 (extracción e intervención del DOM de Google Search).",
+  "permissions": [],
+  "host_permissions": [
+    "https://www.google.com/*",
+    "https://www.google.cl/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.cl/search*"
+      ],
+      "js": [
+        "src/logger.js",
+        "src/domAdapter.js",
+        "src/categorizer.js",
+        "src/queryRefinement.js",
+        "src/content.js"
+      ],
+      "css": ["src/styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

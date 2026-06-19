@@ -1,0 +1,127 @@
+/*
+ * styles.css
+ * Responsabilidad: estilos visuales no invasivos para los elementos
+ * que OptiSearch inserta en la página de resultados de Google.
+ *
+ * Principios de diseño:
+ *   - Las etiquetas NO desplazan ni cubren el contenido original de Google.
+ *   - Los enlaces originales conservan su comportamiento intacto (pointer-events: none).
+ *   - Los colores son suaves y contrastantes, compatibles con modo oscuro básico.
+ *   - El panel de refinamiento se posiciona al inicio del área de resultados.
+ */
+
+/* ================================================================== */
+/* ETIQUETAS DE CATEGORÍA (badges)                                     */
+/* ================================================================== */
+
+.os-badge {
+  display: inline-block;
+  margin: 2px 0 5px 0;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  line-height: 1.6;
+  vertical-align: middle;
+
+  /* No interfiere con eventos del mouse del resultado original */
+  pointer-events: none;
+  user-select: none;
+
+  /* Separación visual del título */
+  margin-left: 4px;
+
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  writing-mode: horizontal-tb !important;
+
+  /* Google aplica transform: scaleY(-1) en el span ancestro inmediato del badge
+     (clase interna V9tjod). Aplicar el mismo transform aquí cancela el efecto:
+     scaleY(-1) × scaleY(-1) = scaleY(1) → texto en orientación normal. */
+  transform: scaleY(-1) !important;
+}
+
+/* Recetas — verde suave */
+.os-badge--recetas {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Tecnología — azul */
+.os-badge--tecnologia {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+/* Salud / Servicios — amarillo cálido */
+.os-badge--salud {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+/* General — gris neutro */
+.os-badge--general {
+  background-color: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+/* ================================================================== */
+/* PANEL DE REFINAMIENTO (fallback cuando no hay resultados)           */
+/* ================================================================== */
+
+.os-refinement-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 8px 0 16px 0;
+  border: 1px solid #bcd2ee;
+  border-radius: 8px;
+  background-color: #f0f6ff;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  max-width: 680px;
+
+  /* No obstruye contenido principal */
+  box-sizing: border-box;
+}
+
+/* Título del panel */
+.os-refinement-title {
+  display: block;
+  width: 100%;
+  color: #003d7a;
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+/* Chips de sugerencia — clickeables y con estilos de enlace propio */
+.os-suggestion-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  border: 1px solid #85b7e8;
+  color: #1a73e8;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  /* Sí tiene pointer-events: auto porque son enlaces funcionales */
+  pointer-events: auto;
+}
+
+.os-suggestion-chip:hover {
+  background-color: #e8f0fe;
+  border-color: #1a73e8;
+}

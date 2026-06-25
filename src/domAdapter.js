@@ -35,6 +35,19 @@
 const DOMAdapter = (() => {
 
   /**
+   * Estadísticas de la última extracción ejecutada.
+   * Se actualizan en cada llamada a extractSearchResults().
+   * Permiten que content.js muestre métricas en el panel de evidencia
+   * sin que ningún otro módulo deba conocer los detalles internos del adapter.
+   */
+  let _lastStats = {
+    estrategia:          'ninguna',
+    candidatos:          0,
+    deduplicados:        0,
+    duplicadosIgnorados: 0
+  };
+
+  /**
    * Lista de patrones de hostname que identifican recursos internos de Google.
    * Un resultado cuyo enlace apunte a cualquiera de estos dominios se descarta.
    */
@@ -385,10 +398,20 @@ const DOMAdapter = (() => {
 
     if (resultados.length === 0) {
       Logger.warn('Ambas estrategias fallaron. No se encontraron resultados en esta página.');
+      _lastStats = { estrategia: 'ninguna', candidatos: 0, deduplicados: 0, duplicadosIgnorados: 0 };
       return [];
     }
 
-    const deduplicados = deduplicateResults(resultados).slice(0, MAX_RESULTS);
+    const candidatosAntes  = resultados.length;
+    const deduplicados     = deduplicateResults(resultados).slice(0, MAX_RESULTS);
+
+    _lastStats = {
+      estrategia:          resultados[0]._estrategia || 'desconocida',
+      candidatos:          candidatosAntes,
+      deduplicados:        deduplicados.length,
+      duplicadosIgnorados: candidatosAntes - deduplicados.length
+    };
+
     Logger.info(`Total final: ${deduplicados.length} resultado(s) únicos procesados`);
     return deduplicados;
   }
@@ -465,7 +488,9 @@ const DOMAdapter = (() => {
     findNearestResultContainer,
     isValidResultLink,
     deduplicateResults,
-    waitForResultsWithObserver
+    waitForResultsWithObserver,
+    /** Devuelve una copia de las estadísticas de la última extracción. */
+    getLastStats: () => ({ ..._lastStats })
   };
 
 })();

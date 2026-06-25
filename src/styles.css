@@ -6,8 +6,8 @@
  * Principios de diseño:
  *   - Las etiquetas NO desplazan ni cubren el contenido original de Google.
  *   - Los enlaces originales conservan su comportamiento intacto (pointer-events: none).
+ *   - El panel de evidencia se posiciona como overlay fijo (no empuja contenido).
  *   - Los colores son suaves y contrastantes, compatibles con modo oscuro básico.
- *   - El panel de refinamiento se posiciona al inicio del área de resultados.
  */
 
 /* ================================================================== */
@@ -15,60 +15,70 @@
 /* ================================================================== */
 
 .os-badge {
-  display: inline-block;
-  margin: 2px 0 5px 0;
-  padding: 2px 9px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: Arial, sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  line-height: 1.6;
+  display: inline-flex;
+  align-items: center;
+  margin: 3px 0 6px 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-family: 'Google Sans', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.15px;
+  line-height: 1.5;
   vertical-align: middle;
+  white-space: nowrap;
 
   /* No interfiere con eventos del mouse del resultado original */
   pointer-events: none;
   user-select: none;
 
-  /* Separación visual del título */
-  margin-left: 4px;
+  /* Borde izquierdo de acento (refuerza visibilidad) */
+  border-left-width: 3px;
+  border-left-style: solid;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 
+  /* Corrección de transform heredado de Google (scaleY(-1) en contenedor interno) */
   direction: ltr !important;
   unicode-bidi: isolate !important;
   writing-mode: horizontal-tb !important;
-
-  /* Google aplica transform: scaleY(-1) en el span ancestro inmediato del badge
-     (clase interna V9tjod). Aplicar el mismo transform aquí cancela el efecto:
-     scaleY(-1) × scaleY(-1) = scaleY(1) → texto en orientación normal. */
   transform: scaleY(-1) !important;
 }
 
-/* Recetas — verde suave */
+/* Recetas — verde */
 .os-badge--recetas {
   background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  color: #0d5a25;
+  border-color: #1e8a3c;
+  border-left-color: #1e8a3c;
 }
 
 /* Tecnología — azul */
 .os-badge--tecnologia {
-  background-color: #cce5ff;
-  color: #004085;
-  border: 1px solid #b8daff;
+  background-color: #d0e8ff;
+  color: #003a8c;
+  border-color: #1a6fcc;
+  border-left-color: #1a6fcc;
 }
 
-/* Salud / Servicios — amarillo cálido */
+/* Salud / Servicios — ámbar */
 .os-badge--salud {
   background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
+  color: #7a4f00;
+  border-color: #d09000;
+  border-left-color: #d09000;
 }
 
 /* General — gris neutro */
 .os-badge--general {
-  background-color: #e2e3e5;
-  color: #383d41;
-  border: 1px solid #d6d8db;
+  background-color: #e9eaeb;
+  color: #2c2f33;
+  border-color: #8a8f96;
+  border-left-color: #8a8f96;
 }
 
 /* ================================================================== */
@@ -88,12 +98,9 @@
   font-family: Arial, sans-serif;
   font-size: 13px;
   max-width: 680px;
-
-  /* No obstruye contenido principal */
   box-sizing: border-box;
 }
 
-/* Título del panel */
 .os-refinement-title {
   display: block;
   width: 100%;
@@ -103,7 +110,6 @@
   margin-bottom: 2px;
 }
 
-/* Chips de sugerencia — clickeables y con estilos de enlace propio */
 .os-suggestion-chip {
   display: inline-block;
   padding: 4px 10px;
@@ -116,12 +122,98 @@
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.15s ease;
-
-  /* Sí tiene pointer-events: auto porque son enlaces funcionales */
   pointer-events: auto;
 }
 
 .os-suggestion-chip:hover {
   background-color: #e8f0fe;
   border-color: #1a73e8;
+}
+
+/* ================================================================== */
+/* PANEL DE EVIDENCIA TÉCNICA RT-001                                   */
+/* ================================================================== */
+
+/*
+ * El panel se posiciona como overlay fijo en la esquina inferior derecha.
+ * Usa position:fixed para no desplazar ni afectar el layout de Google.
+ * z-index alto para que sea visible sobre el contenido, pero no bloquea clics
+ * fuera de su área (footprint mínimo de ~220px x auto).
+ */
+#os-evidence-panel {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 2147483647;
+
+  width: 230px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1.5px solid #c2d8f5;
+  background-color: #f8fbff;
+  box-shadow: 0 4px 16px rgba(0, 60, 150, 0.14);
+  font-family: 'Google Sans', Arial, sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+
+  /* Permite clics en el contenido detrás si el usuario hace clic fuera */
+  pointer-events: auto;
+}
+
+/* Encabezado del panel */
+.os-ep-header {
+  background-color: #1a73e8;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 7px 12px;
+  letter-spacing: 0.1px;
+}
+
+/* Filas de métricas */
+.os-ep-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 12px;
+  border-bottom: 1px solid #e8f0fb;
+}
+
+.os-ep-row:last-of-type {
+  border-bottom: none;
+}
+
+.os-ep-label {
+  color: #5f6368;
+  font-size: 11px;
+}
+
+.os-ep-value {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 11.5px;
+  text-align: right;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Estado final del DOM Adapter */
+.os-ep-status {
+  padding: 5px 12px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  border-top: 1.5px solid #e8f0fb;
+}
+
+.os-ep-status--ok {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.os-ep-status--fail {
+  background-color: #fce8e6;
+  color: #c5221f;
 }
